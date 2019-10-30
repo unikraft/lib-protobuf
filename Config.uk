@@ -1,0 +1,10 @@
+menuconfig LIBPROTOBUF
+    bool "Protobuf"
+    select UKSYSINFO
+    select LIBCXX
+    select LIBCOMPILER_RT_ATOMIC
+    select LIBPTHREAD_EMBEDDED
+    select UKUNISTD
+    select LIBUKTIME
+    select LIBNEWLIBC
+    default n
