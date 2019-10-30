@@ -1,0 +1,334 @@
+#  protobuf Makefile.uk
+#
+#  Authors: Vlad-Andrei Badoiu <vlad_andrei.badoiu@stud.acs.upb.ro>
+#
+#  Copyright (c) 2019, Politehnica University of Bucharest. All rights reserved.
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#  3. Neither the name of the copyright holder nor the names of its
+#     contributors may be used to endorse or promote products derived from
+#     this software without specific prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+#  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+#  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+#  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+#  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+#  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+#  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+#  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THIS HEADER MAY NOT BE EXTRACTED OR MODIFIED IN ANY WAY.
+#
+
+################################################################################
+# Library registration
+################################################################################
+$(eval $(call addlib_s,libprotobuf,$(CONFIG_LIBPROTOBUF)))
+
+################################################################################
+# Sources
+################################################################################
+LIBPROTOBUF_VERSION=3.10.0
+LIBPROTOBUF_URL=https://github.com/protocolbuffers/protobuf/releases/download/v$(LIBPROTOBUF_VERSION)/protobuf-cpp-$(LIBPROTOBUF_VERSION).zip
+LIBPROTOBUF_PATCHDIR=$(LIBPROTOBUF_BASE)/patches
+$(eval $(call fetch,libprotobuf,$(LIBPROTOBUF_URL)))
+
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_BASE)/glue.c
+
+################################################################################
+# Helpers
+################################################################################
+LIBPROTOBUF_SUBDIR=protobuf-$(LIBPROTOBUF_VERSION)
+LIBPROTOBUF_SRC=$(LIBPROTOBUF_ORIGIN)/$(LIBPROTOBUF_SUBDIR)
+
+################################################################################
+# Library includes
+################################################################################
+CINCLUDES-$(CONFIG_LIBPROTOBUF) += -I$(LIBPROTOBUF_SRC)/src
+CXXINCLUDES-$(CONFIG_LIBPROTOBUF) += -I$(LIBPROTOBUF_SRC)/src
+
+################################################################################
+# Global flags
+################################################################################
+# Suppressed flags
+LIBPROTOBUF_SUPPRESS_FLAGS += -Wno-unused-parameter			\
+	-Wno-unused-variable -Wno-unused-value -Wno-unused-function 	\
+	-Wno-missing-field-initializers -Wno-implicit-fallthrough 	\
+	-Wno-cast-function-type -Wno-stringop-truncation 		\
+	-Wno-char-subscripts -Wno-sign-compare -Wno-parentheses		\
+	-Wno-deprecated-declarations
+
+LIBPROTOBUF_CFLAGS-y	+= $(LIBPROTOBUF_SUPPRESS_FLAGS) -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
+LIBPROTOBUF_CXXFLAGS-y	+= $(LIBPROTOBUF_SUPPRESS_FLAGS)
+
+LIBPROTOBUF_CFLAGS-y	+=  -D HAVE_PTHREAD
+LIBPROTOBUF_CXXFLAGS-y	+=  -D HAVE_PTHREAD
+
+################################################################################
+# Library sources
+################################################################################
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/any_lite.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/message_lite.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/timestamp.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/extension_set.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/generated_enum_util.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/struct.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/wire_format_lite.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/message.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/type.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/implicit_weak_message.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/any.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/descriptor_database.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/api.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/int128.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/status.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/mathlimits.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/substitute.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/structurally_valid.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/stringpiece.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/common.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/stringprintf.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/time.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/bytestream.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/statusor.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/stubs/strutil.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/duration.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/reflection_ops.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/any.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/dynamic_message.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/repeated_field.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/wrappers.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/io/gzip_stream.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/io/printer.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/io/zero_copy_stream_impl.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/io/tokenizer.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/io/zero_copy_stream_impl_lite.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/io/io_win32.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/io/coded_stream.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/io/zero_copy_stream.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/io/strtod.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/unknown_field_set.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/source_context.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/generated_message_table_driven_lite.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/text_format.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/descriptor.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/field_mask.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/generated_message_table_driven.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/arena.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/generated_message_util.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/descriptor.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/parse_context.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/generated_message_reflection.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/empty.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/service.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/extension_set_heavy.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/wire_format.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/map_field.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/code_generator.cc
+
+################################################################################
+# Protobuf sources - Util
+################################################################################
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/type_info.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/datapiece.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/proto_writer.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/default_value_objectwriter.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/field_mask_utility.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/json_escaping.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/utility.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/object_writer.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/json_stream_parser.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/protostream_objectsource.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/error_listener.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/json_objectwriter.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/internal/protostream_objectwriter.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/field_comparator.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/field_mask_util.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/json_util.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/time_util.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/delimited_message_util.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/message_differencer.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/util/type_resolver_util.cc
+
+################################################################################
+# Protobuf sources - Compiler - Java
+################################################################################
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_extension.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_map_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_string_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_enum_field_lite.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_generator_factory.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_primitive_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_enum_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_message.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_plugin_unittest.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_message_field_lite.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_doc_comment.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_context.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_service.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_extension_lite.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_message_builder.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_enum.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_generator.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_message_lite.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_primitive_field_lite.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_name_resolver.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_doc_comment_unittest.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_file.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_message_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_helpers.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_string_field_lite.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_enum_lite.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_shared_code_generator.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_map_field_lite.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/java/java_message_builder_lite.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/ruby/ruby_generator_unittest.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/ruby/ruby_generator.cc
+
+################################################################################
+# Protobuf sources - Compiler - CPP
+################################################################################
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_primitive_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_plugin_unittest.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_padding_optimizer.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_generator.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_service.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_message_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/metadata_test.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_message.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_bootstrap_unittest.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_move_unittest.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_extension.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_enum.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_unittest.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_enum_field.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_string_field.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_map_field.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_helpers.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/cpp/cpp_file.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/importer_unittest.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/js/js_generator.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/js/well_known_types_embed.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/parser.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/parser_unittest.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/main.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/command_line_interface.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/plugin.pb.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/importer.cc
+
+################################################################################
+# Protobuf sources - Compiler - Objective C
+################################################################################
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_extension.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_oneof.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_enum_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_enum.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_primitive_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_message_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_helpers_unittest.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_message.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_generator.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_file.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_map_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/objectivec/objectivec_helpers.cc
+
+################################################################################
+# Protobuf sources - Compiler - Python
+################################################################################
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/python/python_plugin_unittest.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/python/python_generator.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/mock_code_generator.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/php/php_generator.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/test_plugin.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/zip_writer.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/subprocess.cc
+LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/plugin.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/annotation_test_util.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/command_line_interface_unittest.cc
+
+################################################################################
+# Protobuf sources - Compiler - Csharp
+################################################################################
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_repeated_message_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_enum_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_bootstrap_unittest.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_field_base.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_generator.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_primitive_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_wrapper_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_reflection_class.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_helpers.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_enum.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_doc_comment.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_source_generator_base.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_generator_unittest.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_message_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_message.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_repeated_primitive_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_map_field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/src/google/protobuf/compiler/csharp/csharp_repeated_enum_field.cc
+
+################################################################################
+# Protobuf sources - Internal
+################################################################################
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/internal/api_implementation.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/internal/python_protobuf.cc
+
+################################################################################
+# Protobuf sources - Pyext
+################################################################################
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/field.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/extension_dict.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/message.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/descriptor_containers.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/descriptor_database.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/descriptor_pool.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/message_factory.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/descriptor.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/repeated_scalar_container.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/message_module.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/repeated_composite_container.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/unknown_fields.cc
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/python/google/protobuf/pyext/map_container.cc
+
+################################################################################
+# Protobuf sources - Ruby
+################################################################################
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/ruby/ext/google/protobuf_c/encode_decode.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/ruby/ext/google/protobuf_c/defs.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/ruby/ext/google/protobuf_c/map.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/ruby/ext/google/protobuf_c/message.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/ruby/ext/google/protobuf_c/storage.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/ruby/ext/google/protobuf_c/wrap_memcpy.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/ruby/ext/google/protobuf_c/upb.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/ruby/ext/google/protobuf_c/repeated_field.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/ruby/ext/google/protobuf_c/protobuf.c
+
+################################################################################
+# Protobuf sources - Ext
+################################################################################
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/encode_decode.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/array.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/map.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/utf8.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/message.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/storage.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/type_check.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/def.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/upb.c
+#LIBPROTOBUF_SRCS-y += $(LIBPROTOBUF_SRC)/php/ext/google/protobuf/protobuf.c
