@@ -38,8 +38,8 @@ $(eval $(call addlib_s,libprotobuf,$(CONFIG_LIBPROTOBUF)))
 ################################################################################
 # Sources
 ################################################################################
-LIBPROTOBUF_VERSION=3.10.0
-LIBPROTOBUF_URL=https://github.com/protocolbuffers/protobuf/releases/download/v$(LIBPROTOBUF_VERSION)/protobuf-cpp-$(LIBPROTOBUF_VERSION).zip
+LIBPROTOBUF_VERSION=21.5
+LIBPROTOBUF_URL=https://github.com/protocolbuffers/protobuf/releases/download/v$(LIBPROTOBUF_VERSION)/protobuf-all-$(LIBPROTOBUF_VERSION).zip
 LIBPROTOBUF_PATCHDIR=$(LIBPROTOBUF_BASE)/patches
 $(eval $(call fetch,libprotobuf,$(LIBPROTOBUF_URL)))
 
