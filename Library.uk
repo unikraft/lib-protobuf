@@ -1,0 +1,6 @@
+name        := "protobuf"
+description := "Protocol Buffers are language-neutral, platform-neutral extensible mechanisms for serializing structured data."
+gitrepo     := "https://github.com/protocolbuffers/protobuf.git"
+homepage    := "https://protobuf.dev/"
+license     := "BSD-3-Clause"
+version     := 3.10.0 sha256:ffb91e102e8c389fba6fefec948421852979ae655ebb52e69859a6a3f4c5b61b https://github.com/protocolbuffers/protobuf/releases/download/v3.10.0/protobuf-cpp-3.10.0.tar.gz
